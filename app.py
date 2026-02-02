@@ -9,13 +9,11 @@ st.title("Spam Detector AI")
 text = st.text_area("Masukkan pesan:")
 
 if st.button("Cek"):
-    if text.strip() == "":
-        st.warning("Pesan tidak boleh kosong")
-    else:
-        vec = vectorizer.transform([text])
-        pred = model.predict(vec)[0]
+    data = vectorizer.transform([user_input])
+    pred = model.predict(data)[0]
 
-        if pred == "spam":
-            st.error("🚨 SPAM")
-        else:
-            st.success("✅ BUKAN SPAM")
+    if pred == "spam":
+        st.error("🚨 Ini adalah SPAM!")
+    else:
+        st.success("✅ Ini BUKAN spam (ham)")
+
