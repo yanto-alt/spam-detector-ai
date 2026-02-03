@@ -1,18 +1,23 @@
 import streamlit as st
-import joblib
+import pickle
 
-model = joblib.load("spam_model.pkl")
-vectorizer = joblib.load("vectorizer.pkl")
+# Load model & vectorizer
+model = pickle.load(open("spam_model.pkl", "rb"))
+vectorizer = pickle.load(open("vectorizer.pkl", "rb"))
 
 st.title("Spam Detector AI")
 
-text = st.text_area("Masukkan pesan:")
+# INPUT USER (INI YANG KEMARIN KURANG)
+user_input = st.text_area("Masukkan pesan:")
 
 if st.button("Cek"):
-    data = vectorizer.transform([user_input])
-    pred = model.predict(data)[0]
-
-    if pred == "spam":
-        st.error("🚨 Ini adalah SPAM!")
+    if user_input.strip() == "":
+        st.warning("Pesan tidak boleh kosong")
     else:
-        st.success("✅ Ini BUKAN spam (ham)")
+        data = vectorizer.transform([user_input])
+        prediction = model.predict(data)
+
+        if prediction[0] == 1:
+            st.error("🚨 SPAM")
+        else:
+            st.success("✅ BUKAN SPAM")
