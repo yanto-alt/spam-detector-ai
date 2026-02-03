@@ -1,18 +1,25 @@
 import streamlit as st
 import joblib
+import os
 
-model = joblib.load("spam_model.pkl")
-vectorizer = joblib.load("vectorizer.pkl")
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+
+model = joblib.load(os.path.join(BASE_DIR, "spam_model.pkl"))
+vectorizer = joblib.load(os.path.join(BASE_DIR, "vectorizer.pkl"))
 
 st.title("Spam Detector AI")
 
 text = st.text_area("Masukkan pesan:")
 
 if st.button("Cek"):
-    data = vectorizer.transform([user_input])
-    pred = model.predict(data)[0]
-
-    if pred == "spam":
-        st.error("🚨 Ini adalah SPAM!")
+    if text.strip() == "":
+        st.warning("Pesan tidak boleh kosong")
     else:
-        st.success("✅ Ini BUKAN spam (ham)")
+        data = vectorizer.transform([text])
+        pred = model.predict(data)[0]
+
+        # Numeric label handling
+        if pred == 1:
+            st.error("🚨 Ini adalah SPAM!")
+        else:
+            st.success("✅ Ini BUKAN spam (ham)")
