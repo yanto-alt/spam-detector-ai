@@ -1,55 +1,18 @@
 import streamlit as st
-import pickle
+import joblib
 
-with open("spam_model.pkl", "rb") as f:
-    model = pickle.load(f)
+model = joblib.load("spam_model.pkl")
+vectorizer = joblib.load("vectorizer.pkl")
 
-print(model)
+st.title("Spam Detector AI")
 
-vectorizer = pickle.load(open("vectorizer.pkl", "rb"))
-# ===== Page config =====
-st.set_page_config(
-    page_title="Spam Detector AI",
-    page_icon="🚨",
-    layout="centered"
-)
+text = st.text_area("Masukkan pesan:")
 
-# ===== Title =====
-st.title("🚨 Spam Detector AI")
-st.write("Cek apakah pesan termasuk **SPAM** atau **BUKAN SPAM**")
+if st.button("Cek"):
+    data = vectorizer.transform([user_input])
+    pred = model.predict(data)[0]
 
-# ===== Contoh pesan =====
-with st.expander("📌 Contoh Pesan"):
-    st.write("🔴 SPAM:")
-    st.code("Selamat! Anda memenangkan hadiah 100 juta. Klik link berikut.")
-    st.write("🟢 BUKAN SPAM:")
-    st.code("Halo, jangan lupa meeting jam 10 pagi ya.")
-
-# ===== Input =====
-text = st.text_area("✉️ Masukkan pesan:", height=150)
-
-# ===== Button =====
-if st.button("🔍 Cek Pesan"):
-    if text.strip() == "":
-        st.warning("⚠️ Pesan tidak boleh kosong!")
+    if pred == "spam":
+        st.error("🚨 Ini adalah SPAM!")
     else:
-        # Transform text
-        text_vec = vectorizer.transform([text])
-
-        # Prediction
-        prediction = model.predict(text_vec)[0]
-        probability = model.predict_proba(text_vec).max() * 100
-
-        st.divider()
-
-        # Result
-        if prediction == 1:
-            st.error(f"🚨 **SPAM** ({probability:.2f}%)")
-        else:
-            st.success(f"✅ **BUKAN SPAM** ({probability:.2f}%)")
-
-        # Confidence bar
-        st.write("📊 Tingkat Keyakinan Model")
-        st.progress(int(probability))
-
-
+        st.success("✅ Ini BUKAN spam (ham)")
