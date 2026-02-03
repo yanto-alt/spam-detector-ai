@@ -1,6 +1,11 @@
 import streamlit as st
 import pickle
-model = pickle.load(open("spam_model.pkl", "rb"))
+
+with open("spam_model.pkl", "rb") as f:
+    model = pickle.load(f)
+
+print(model)
+
 vectorizer = pickle.load(open("vectorizer.pkl", "rb"))
 # ===== Page config =====
 st.set_page_config(
@@ -46,4 +51,5 @@ if st.button("🔍 Cek Pesan"):
         # Confidence bar
         st.write("📊 Tingkat Keyakinan Model")
         st.progress(int(probability))
+
 
